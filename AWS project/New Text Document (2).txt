@@ -1,0 +1,6 @@
+PublicIPs: 3.1.205.247 - (disaster recovery)
+[root@ip-172-31-20-240 ~]#
+
+PublicIPs: 13.250.11.75 (production)
+[root@ip-172-31-21-130 ~]#
+

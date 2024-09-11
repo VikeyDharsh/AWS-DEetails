@@ -1,0 +1,230 @@
+open go daddy 
+
+open DNS >> Forwarding..... add Forwarding
+
+------Subdomains
+
+sub - "buy.viknesh.xyz"
+--http://  [buy.viknesh.xyz]
+
+--------------------------------------------------------------
+-----Domain
+
+--http://  [viknesh.xyz]
+
+==========================================================
+Now AWS Certificate Manager
+
+give request
+
+---Certificate a public certificate
+
+:Request a public certificate
+
+next
+---------
+
+Fully qualified domain name -
+[viknesh.xyz]
+[buy.viknesh.xyz]
+
+RSA 2048
+
+Give >> Request
+======================================
+
+ACM >> certificate manager >> Request
+Certificate type request a public certificate 
+===================================================
+Now go to Amazon R53
+
+Route 53 >> Hosted zones >> Create hosted zone
+
+Domain name -- viknesh.xyz
+Description -- viknesh.xyz
+
+Type - Public hosted zone
+
+Next give - Create Hosted Zone
+=====================================================
+viknesh.xyz was successfully created.
+
+2 Record created NS & SOA
+
+========================================
+
+click NS record copy the 4 Value.......
+
+open Our Domain click nameserver
+
+change name server >> ill use my own nameserver
+
+paste the 4 Value..
+
+#$$
+#$$
+#$$
+#$$
+
+done 
+Save and continue
+=======================================================
+Go ACM open our created certificate
+
+click ---> CREATE RECORDS IN R53 >> Create Record
+
+Create DNS records in Amazon Route 53 (2/2)
+
+Create
+==========================================================
+Now go to R53 and refresh
+
+you'll find a new 2 record 
+2 Record CNAME & CNAME  
+==========================================================
+Now go to EC2 create 1 security group....
+
+Create a sec group
+============================================================
+Now go to RDS
+
+>>go to subnet groups 
+
+Subnet group details
+
+Name: AWS project
+Description :AWS project
+-----
+Availability Zones: select 3 zones...
+
+Subnets:  select 3 subnets...
+-----
+ {then CREATE}
+
+check subnet created
+===========================================================
+RDS
+
+create 1
+
+Then go to Database
+
+standard create
+
+engine option: Mysql
+engine version: 8.0.35 [enable RDS]
+
+----
+Templates: Free tier
+
+Settings:
+DB instance identifier - proddb
+------
+
+Credentials Settings:
+
+Master username - proddb
+
+Master password         : proddb12345
+Confirm Master password : proddb12345
+
+Remove Enable storage autoscaling
+
+Existing VPC security groups {select our created security group}
+---
+
+Additional configuration
+
+Initial database name - proddb
+
+remove backup
+remove encryption
+remove maintaince
+
+----Create Database 
+
+=======================================================================
+RDS
+
+create 2
+
+Then go to Database
+
+standard create
+
+engine option: Mysql
+engine version: 8.0.35 [enable RDS]
+
+----
+Templates: Free tier
+
+Settings:
+DB instance identifier - drproddb
+------
+
+Credentials Settings:
+
+Master username - drproddb
+
+Master password         : drproddb12345
+Confirm Master password : drproddb12345
+
+Remove Enable storage autoscaling
+
+Existing VPC security groups {select our created security group}
+---
+
+Additional configuration
+
+Initial database name - drproddb
+
+remove backup
+remove encryption
+remove maintaince
+
+----Create Database 
+
+===================================================================
+Go to IAM
+
+create 1 Role
+
+USEcase >> EC2 /next
+
+Permissions policies >> AdministratorAccess /next
+
+Role Name: viknesh-AWS-Project
+
+DONE 
+======================================================================
+Now go to EC2
+
+go to Ec2 Create 2 Server --- dr & production
+
+Amazon Machine Image (AMI) - kernel 5.10
+
+Instance type - any
+
+Advanced details  Info 
+IAM instance profile - [Viknesh-AWS-Project]
+------------------------------
+#!/bin/bash
+yum install httpd php-mysql -y
+amazon-linux-extras install -y php7.3
+cd /var/www/html
+echo "healthy" > healthy.html
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz
+cp -r wordpress/* /var/www/html/
+rm -rf wordpress
+rm -rf latest.tar.gz
+chmod -R 755 wp-content
+chown -R apache:apache wp-content
+wget https://s3.amazonaws.com/bucketforwordpresslab-donotdelete/htaccess.txt
+mv htaccess.txt .htaccess
+chkconfig httpd on
+service httpd start
+
+
+Create
+==============================================

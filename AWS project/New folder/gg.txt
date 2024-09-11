@@ -1,0 +1,116 @@
+first go to go daddy 
+
+open DNS >> DNS Record 
+
+Add record >>>>> .....Save
+=====================================
+next open certificate manager
+
+click request >> Request public certificate >> 
+
+Fully qualified domain name - domainname: viknesh.xyz
+
+next approve.. wait for the - Pending validation
+
+=================================================
+
+next go to R53 create a domain ID with oru domain name....
+
+================================================
+Go to IAM create roles
+
+EC2 -
+
+Permissions policies - AdministratorAccess
+
+==============================================
+Security Groups  
+
+create 2 Security Groups 
+
+project-disaster & project-production
+
+TCP -80, 443, 3306, 22
+================================================
+Next Create RDS >> 
+
+Engine options -> MySQL
+
+Engine Version -> (Enable RDS Extended Support)
+
+---
+settings
+DB instance identifier - [ dr ]
+
+Master username - admin
+
+Master password         - viknesh850
+Confirm master password - viknesh850
+
+remove auto scaling...
+
+Existing VPC security groups - give the created sg
+
+Initial database name - viknesh
+-----------------------------------------------------
+
+Engine options -> MySQL
+
+Engine Version -> (Enable RDS Extended Support)
+
+---
+settings
+DB instance identifier - [ dr ]
+
+Master username - admin
+
+Master password         - viknesh850
+Confirm master password - viknesh850
+
+remove auto scaling...
+
+Existing VPC security groups - give the created sg
+
+Initial database name - dharshan
+
+==============================================================
+go to Ec2 Create 2 Server --- dr & production
+
+Amazon Machine Image (AMI) - kernel 5.10
+
+Instance type - any
+
+Advanced details  Info 
+IAM instance profile - [Project-AWS]
+------------------------------
+#!/bin/bash
+yum install httpd php-mysql -y
+amazon-linux-extras install -y php7.3
+cd /var/www/html
+echo "healthy" > healthy.html
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz
+cp -r wordpress/* /var/www/html/
+rm -rf wordpress
+rm -rf latest.tar.gz
+chmod -R 755 wp-content
+chown -R apache:apache wp-content
+wget https://s3.amazonaws.com/bucketforwordpresslab-donotdelete/htaccess.txt
+mv htaccess.txt .htaccess
+chkconfig httpd on
+service httpd start
+------------------------------
+================================================================
+
+after creating the 2 server first copy the ip of dr server and hit
+
+page opens....
+
+
+Database Name: [dr]
+Username     : [admin]
+Password     : [viknesh850]
+Database Host: [rds end point]
+
+
+
